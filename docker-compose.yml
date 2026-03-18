@@ -1,0 +1,21 @@
+services:
+  postgres:
+    container_name: delivery-tracking-database
+    image: postgres:16.0
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: delivery-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  kafka:
+    container_name: delivery-tracking-kafka-server
+    image: apache/kafka:4.1.1
+    ports:
+      - "9092:9092"
+
+volumes:
+  postgres-data:
