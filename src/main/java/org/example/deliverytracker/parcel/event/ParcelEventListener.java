@@ -1,7 +1,7 @@
-package org.example.deliverytracker.parcel;
+package org.example.deliverytracker.parcel.event;
 
-import org.example.deliverytracker.kafka.KafkaConfig;
-import org.example.deliverytracker.kafka.event.ParcelEvent;
+import org.example.deliverytracker.kafka.Topics;
+import org.example.deliverytracker.parcel.ParcelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,7 +17,7 @@ public class ParcelEventListener {
         this.parcelService = parcelService;
     }
 
-    @KafkaListener(topics = KafkaConfig.PARCEL_EVENTS_TOPIC)
+    @KafkaListener(topics = Topics.PARCEL_EVENTS_TOPIC)
     void onParcelEvent(ParcelEvent event) {
         logger.info("Received ParcelEvent - Tracking: {}, Status: {}, Location: {}",
                 event.trackingNumber(), event.status(), event.location());

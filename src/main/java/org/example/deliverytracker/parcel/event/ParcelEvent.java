@@ -1,4 +1,4 @@
-package org.example.deliverytracker.kafka.event;
+package org.example.deliverytracker.parcel.event;
 
 import org.example.deliverytracker.parcel.model.ParcelStatus;
 
