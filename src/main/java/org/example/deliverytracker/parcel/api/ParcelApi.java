@@ -19,7 +19,7 @@ public class ParcelApi {
 
     @PostMapping
     public ResponseEntity<ApiResponse> create(@RequestBody @Valid CreateParcelDto request) {
-        ParcelDto dto = parcelService.create(request);
+        ParcelDto dto = parcelService.createParcel(request);
         return ResponseEntity.ok(new ApiResponse(dto));
     }
 

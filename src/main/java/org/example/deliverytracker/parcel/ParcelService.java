@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional
 public class ParcelService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ParcelService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParcelService.class);
 
     private final ParcelRepository repository;
     private final ParcelMapper mapper;
@@ -25,7 +25,7 @@ public class ParcelService {
         this.mapper = mapper;
     }
 
-    public ParcelDto create(CreateParcelDto dto) {
+    public ParcelDto createParcel(CreateParcelDto dto) {
         if (repository.existsByTrackingNumber(dto.trackingNumber())) {
             throw new IllegalArgumentException("A parcel with the given tracking number is already created");
         }
@@ -36,34 +36,23 @@ public class ParcelService {
         return mapper.toDto(saved);
     }
 
-    public void updateStatus(String trackingNumber, ParcelStatus status, String location) {
-        updateStatus(trackingNumber, status, location, getDefaultDescription(status));
-    }
 
-    public void updateStatus(String trackingNumber, ParcelStatus status, String location, String description) {
+    public void updateParcelStatus(String trackingNumber, ParcelStatus status, String location) {
         Parcel parcel = repository.findByTrackingNumber(trackingNumber)
                 .orElseGet(() -> {
-                    logger.info("Creating new parcel for tracking number: {}", trackingNumber);
+                    LOGGER.info("Creating new parcel for tracking number: {}", trackingNumber);
                     Parcel newParcel = new Parcel(trackingNumber, location);
                     return newParcel;
                 });
 
-        parcel.addTrackingEvent(location, status, description);
+        parcel.addTrackingEvent(location, status, ParcelStatus.getDescription(status));
         repository.save(parcel);
 
-        logger.info("Updated parcel {} - Status: {}, Location: {}", trackingNumber, status, location);
+        LOGGER.info("Updated parcel {} - Status: {}, Location: {}", trackingNumber, status, location);
     }
 
     public Optional<ParcelDto> findByTrackingNumber(String trackingNumber) {
         return repository.findByTrackingNumber(trackingNumber)
                 .map(ParcelMapper::toDto);
-    }
-
-    private String getDefaultDescription(ParcelStatus status) {
-        return switch (status) {
-            case CREATED -> "Parcel created";
-            case IN_TRANSIT -> "Parcel in transit";
-            case DELIVERED -> "Parcel delivered";
-        };
     }
 }
