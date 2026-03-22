@@ -2,7 +2,6 @@ package org.example.deliverytracker.parcel.dto;
 
 import org.example.deliverytracker.parcel.model.ParcelStatus;
 
-import java.util.List;
 import java.util.UUID;
 
 public record ParcelDto(
@@ -10,7 +9,6 @@ public record ParcelDto(
         String trackingNumber,
         ParcelStatus status,
         String location,
-        List<TrackingEventDto> trackingHistory,
         long createdAt,
         long updatedAt
 ) {

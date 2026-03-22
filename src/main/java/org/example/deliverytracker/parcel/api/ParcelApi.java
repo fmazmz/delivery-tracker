@@ -6,7 +6,10 @@ import org.example.deliverytracker.parcel.ParcelService;
 import org.example.deliverytracker.parcel.dto.ParcelDto;
 import org.example.deliverytracker.util.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/parcels")
@@ -18,15 +21,8 @@ public class ParcelApi {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody @Valid CreateParcelDto request) {
+    public ResponseEntity<ApiResponse> create(@RequestBody@Valid CreateParcelDto request) {
         ParcelDto dto = parcelService.createParcel(request);
         return ResponseEntity.ok(new ApiResponse(dto));
-    }
-
-    @GetMapping("/track/{trackingNumber}")
-    public ResponseEntity<ApiResponse> track(@PathVariable String trackingNumber) {
-        return parcelService.findByTrackingNumber(trackingNumber)
-                .map(dto -> ResponseEntity.ok(new ApiResponse(dto)))
-                .orElse(ResponseEntity.notFound().build());
     }
 }

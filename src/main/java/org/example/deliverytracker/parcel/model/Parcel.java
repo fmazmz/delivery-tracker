@@ -29,10 +29,6 @@ public class Parcel {
 
     private String location;
 
-    @OneToMany(mappedBy = "parcel", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("timestamp DESC")
-    private List<TrackingEvent> trackingHistory = new ArrayList<>();
-
     @CreationTimestamp
     private Instant createdAt;
 
@@ -42,12 +38,5 @@ public class Parcel {
     public Parcel(String trackingNumber, String location) {
         this.trackingNumber = trackingNumber;
         this.location = location;
-    }
-
-    public void addTrackingEvent(String location, ParcelStatus status, String description) {
-        TrackingEvent event = new TrackingEvent(this, location, status, description);
-        this.trackingHistory.add(event);
-        this.location = location;
-        this.status = status;
     }
 }

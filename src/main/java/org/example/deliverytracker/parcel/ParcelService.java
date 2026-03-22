@@ -3,26 +3,28 @@ package org.example.deliverytracker.parcel;
 import jakarta.transaction.Transactional;
 import org.example.deliverytracker.parcel.dto.CreateParcelDto;
 import org.example.deliverytracker.parcel.dto.ParcelDto;
+import org.example.deliverytracker.parcel.event.ParcelEvent;
+import org.example.deliverytracker.parcel.event.ParcelEventPublisher;
 import org.example.deliverytracker.parcel.model.Parcel;
 import org.example.deliverytracker.parcel.model.ParcelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 public class ParcelService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParcelService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ParcelService.class);
 
     private final ParcelRepository repository;
     private final ParcelMapper mapper;
+    private final ParcelEventPublisher eventPublisher;
 
-    public ParcelService(ParcelRepository repository, ParcelMapper mapper) {
+    public ParcelService(ParcelRepository repository, ParcelMapper mapper, ParcelEventPublisher eventPublisher) {
         this.repository = repository;
         this.mapper = mapper;
+        this.eventPublisher = eventPublisher;
     }
 
     public ParcelDto createParcel(CreateParcelDto dto) {
@@ -30,29 +32,30 @@ public class ParcelService {
             throw new IllegalArgumentException("A parcel with the given tracking number is already created");
         }
         Parcel parcel = mapper.fromDto(dto);
-        parcel.addTrackingEvent(dto.location(), ParcelStatus.CREATED, "Parcel created");
+        parcel.setStatus(ParcelStatus.CREATED);
         Parcel saved = repository.saveAndFlush(parcel);
+
+        eventPublisher.publishParcelEvent(
+                new ParcelEvent(saved.getTrackingNumber(), saved.getStatus(), saved.getLocation())
+        );
 
         return mapper.toDto(saved);
     }
 
-
-    public void updateParcelStatus(String trackingNumber, ParcelStatus status, String location) {
-        Parcel parcel = repository.findByTrackingNumber(trackingNumber)
+    public void updateStatus(ParcelEvent event) {
+        Parcel parcel = repository.findByTrackingNumber(event.trackingNumber())
                 .orElseGet(() -> {
-                    LOGGER.info("Creating new parcel for tracking number: {}", trackingNumber);
-                    Parcel newParcel = new Parcel(trackingNumber, location);
+                    logger.info("Creating new parcel for tracking number: {}", event.trackingNumber());
+                    Parcel newParcel = new Parcel(event.trackingNumber(), event.location());
+                    newParcel.setStatus(event.status());
                     return newParcel;
                 });
 
-        parcel.addTrackingEvent(location, status, ParcelStatus.getDescription(status));
+        parcel.setStatus(event.status());
+        parcel.setLocation(event.location());
         repository.save(parcel);
 
-        LOGGER.info("Updated parcel {} - Status: {}, Location: {}", trackingNumber, status, location);
-    }
-
-    public Optional<ParcelDto> findByTrackingNumber(String trackingNumber) {
-        return repository.findByTrackingNumber(trackingNumber)
-                .map(ParcelMapper::toDto);
+        logger.info("Updated parcel {} - Status: {}, Location: {}",
+                event.trackingNumber(), event.status(), event.location());
     }
 }

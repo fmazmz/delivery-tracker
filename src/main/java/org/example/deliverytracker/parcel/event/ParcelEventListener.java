@@ -22,7 +22,7 @@ public class ParcelEventListener {
         logger.info("Received ParcelEvent - Tracking: {}, Status: {}, Location: {}",
                 event.trackingNumber(), event.status(), event.location());
 
-        parcelService.updateParcelStatus(event.trackingNumber(), event.status(), event.location());
+        parcelService.updateStatus(event);
     }
 }
 
