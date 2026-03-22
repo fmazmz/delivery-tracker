@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ParcelMapper {
-    static ParcelDto toDto(Parcel parcel) {
+    public ParcelDto toDto(Parcel parcel) {
         return new ParcelDto(
                 parcel.getId(),
                 parcel.getTrackingNumber(),
@@ -17,7 +17,7 @@ public class ParcelMapper {
                 parcel.getUpdatedAt().toEpochMilli()
         );
     }
-    static Parcel fromDto(CreateParcelDto dto) {
+    public Parcel fromDto(CreateParcelDto dto) {
         return new Parcel(
                 dto.trackingNumber(),
                 dto.location()

@@ -58,4 +58,12 @@ public class ParcelService {
         logger.info("Updated parcel {} - Status: {}, Location: {}",
                 event.trackingNumber(), event.status(), event.location());
     }
+
+    public ParcelDto getParcelByTrackingNumber(String trackingNumber) {
+        return repository.findByTrackingNumber(trackingNumber)
+                .map(mapper::toDto)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Parcel not found with trackingNumber: " + trackingNumber)
+                );
+    }
 }
