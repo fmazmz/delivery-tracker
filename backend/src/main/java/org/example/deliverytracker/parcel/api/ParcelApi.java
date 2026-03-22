@@ -23,8 +23,8 @@ public class ParcelApi {
         return ResponseEntity.ok(new ApiResponse(dto));
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse> getParcel(@RequestParam String trackingNumber) {
+    @GetMapping("track/{trackingNumber}")
+    public ResponseEntity<ApiResponse> getParcel(@PathVariable String trackingNumber) {
         ParcelDto dto = parcelService.getParcelByTrackingNumber(trackingNumber);
         return ResponseEntity.ok(new ApiResponse<>(dto));
     }
