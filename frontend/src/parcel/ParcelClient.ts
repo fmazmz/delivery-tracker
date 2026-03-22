@@ -1,6 +1,6 @@
 import {Parcel} from "./Parcel"
 
-class ParcelClient {
+export class ParcelClient {
     baseUrl: string;
 
     constructor(baseUrl: string) {
@@ -8,7 +8,7 @@ class ParcelClient {
     }
 
     async getParcel(trackingNumber: string): Promise<Parcel> {
-        const fullUrl = `${this.baseUrl}/api/v1/parcels/${trackingNumber}`;
+        const fullUrl = `${this.baseUrl}/api/v1/parcels/track/${trackingNumber}`;
         let response;
 
         try {
@@ -17,25 +17,27 @@ class ParcelClient {
                     Accept: "application/json"
                 }
             });
+            console.log(response);
         } catch (e) {
             throw new Error("Failed to fetch data");
+        }
+
+        if (response.status === 404) {
+            throw new Error(`Parcel with tracking number: ${trackingNumber} not found`)
         }
 
         if (!response.ok) {
             throw new Error(`Http error: ${response.status}`)
         }
-        if (response.status = 404) {
-            throw new Error(`Parcel with tracking number: ${trackingNumber} not found`)
-        }
 
-        const data = await response.json();
-        console.log(`Received API response: ${data}`);
+        const raw = await response.json();
+        console.log(`Received API response: ${raw}`);
 
         return new Parcel(
-            data.trackingNumber,
-            data.status,
-            data.location,
-            new Date(data.updatedAt)
+            raw.data.trackingNumber,
+            raw.data.status,
+            raw.data.location,
+            new Date(raw.data.updatedAt)
         );
     }
 }

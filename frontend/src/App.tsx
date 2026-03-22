@@ -1,17 +1,18 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import TrackPage from "./pages/TrackParcel";
+import HomePage from "./pages/Index";
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-      <div>
-        <h1>Delivery Tracker</h1>
-      </div>
-  )
+export default function App() {
+    return (
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/track/:trackingNumber" element={<TrackPage />} />
+                </Routes>
+            </BrowserRouter>
+        </>
+    );
 }
-
-export default App
