@@ -1,15 +1,19 @@
 package org.example.deliverytracker.parcel.model;
 
 public enum ParcelStatus {
-    CREATED,
-    IN_TRANSIT,
-    DELIVERED;
+    CREATED("Parcel Created"),
+    RECEIVED("Parcel Received"),
+    IN_TRANSIT("In Transit"),
+    OUT_FOR_DELIVERY("Out for delivery"),
+    DELIVERED("Delivered");
 
-    public static String getDescription(ParcelStatus status) {
-        return switch (status) {
-            case CREATED -> "Parcel Created";
-            case IN_TRANSIT -> "In transit";
-            case DELIVERED -> "Delivered";
-        };
+    private final String label;
+
+    ParcelStatus(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return this.label;
     }
 }

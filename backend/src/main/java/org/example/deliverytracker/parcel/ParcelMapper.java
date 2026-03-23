@@ -12,6 +12,7 @@ public class ParcelMapper {
                 parcel.getId(),
                 parcel.getTrackingNumber(),
                 parcel.getStatus(),
+                parcel.getStatus().getLabel(),
                 parcel.getLocation(),
                 parcel.getCreatedAt().toEpochMilli(),
                 parcel.getUpdatedAt().toEpochMilli()

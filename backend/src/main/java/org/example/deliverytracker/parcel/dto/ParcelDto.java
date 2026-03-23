@@ -8,6 +8,7 @@ public record ParcelDto(
         UUID id,
         String trackingNumber,
         ParcelStatus status,
+        String statusLabel,
         String location,
         long createdAt,
         long updatedAt
