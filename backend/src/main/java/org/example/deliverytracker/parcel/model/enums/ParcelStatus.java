@@ -1,4 +1,4 @@
-package org.example.deliverytracker.parcel.model;
+package org.example.deliverytracker.parcel.model.enums;
 
 public enum ParcelStatus {
     CREATED("Parcel Created"),

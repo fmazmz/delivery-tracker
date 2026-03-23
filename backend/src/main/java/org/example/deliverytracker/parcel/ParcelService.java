@@ -6,7 +6,7 @@ import org.example.deliverytracker.parcel.dto.ParcelDto;
 import org.example.deliverytracker.parcel.event.ParcelEvent;
 import org.example.deliverytracker.parcel.event.ParcelEventPublisher;
 import org.example.deliverytracker.parcel.model.Parcel;
-import org.example.deliverytracker.parcel.model.ParcelStatus;
+import org.example.deliverytracker.parcel.model.enums.ParcelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,12 @@ public class ParcelService {
         Parcel saved = repository.saveAndFlush(parcel);
 
         eventPublisher.publishParcelEvent(
-                new ParcelEvent(saved.getTrackingNumber(), saved.getStatus(), saved.getLocation(), saved.getWeight())
+                new ParcelEvent(
+                        saved.getTrackingNumber(),
+                        saved.getStatus(),
+                        saved.getLocation(),
+                        saved.getWeight(),
+                        saved.getDeliveryType())
         );
 
         return mapper.toDto(saved);
@@ -46,7 +51,13 @@ public class ParcelService {
         Parcel parcel = repository.findByTrackingNumber(event.trackingNumber())
                 .orElseGet(() -> {
                     logger.info("Creating new parcel for tracking number: {}", event.trackingNumber());
-                    Parcel newParcel = new Parcel(event.trackingNumber(), event.location(), event.weight());
+                    Parcel newParcel = new Parcel(
+                            event.trackingNumber(),
+                            event.location(),
+                            event.weight(),
+                            event.deliveryType()
+                    );
+
                     newParcel.setStatus(event.status());
                     return newParcel;
                 });
