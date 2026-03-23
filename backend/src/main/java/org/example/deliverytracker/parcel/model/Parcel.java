@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,23 +21,20 @@ public class Parcel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @Column(unique = true)
     private String trackingNumber;
-
     @Enumerated(value = EnumType.STRING)
     private ParcelStatus status;
-
     private String location;
-
+    private BigDecimal weight;
     @CreationTimestamp
     private Instant createdAt;
-
     @UpdateTimestamp
     private Instant updatedAt;
 
-    public Parcel(String trackingNumber, String location) {
+    public Parcel(String trackingNumber, String location, BigDecimal weight) {
         this.trackingNumber = trackingNumber;
         this.location = location;
+        this.weight = weight;
     }
 }

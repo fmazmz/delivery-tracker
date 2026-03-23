@@ -36,7 +36,7 @@ public class ParcelService {
         Parcel saved = repository.saveAndFlush(parcel);
 
         eventPublisher.publishParcelEvent(
-                new ParcelEvent(saved.getTrackingNumber(), saved.getStatus(), saved.getLocation())
+                new ParcelEvent(saved.getTrackingNumber(), saved.getStatus(), saved.getLocation(), saved.getWeight())
         );
 
         return mapper.toDto(saved);
@@ -46,7 +46,7 @@ public class ParcelService {
         Parcel parcel = repository.findByTrackingNumber(event.trackingNumber())
                 .orElseGet(() -> {
                     logger.info("Creating new parcel for tracking number: {}", event.trackingNumber());
-                    Parcel newParcel = new Parcel(event.trackingNumber(), event.location());
+                    Parcel newParcel = new Parcel(event.trackingNumber(), event.location(), event.weight());
                     newParcel.setStatus(event.status());
                     return newParcel;
                 });
